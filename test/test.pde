@@ -14,8 +14,9 @@ import com.thomasdiewald.pixelflow.java.imageprocessing.filter.DwFilter;
 
 import processing.core.*;
 import processing.opengl.PGraphics2D;
-import processing.video.Capture;
-
+//import processing.video.Capture;
+import KinectPV2.KJoint;
+import KinectPV2.*;
 
   // Example, Optical Flow for Webcam capture.
   
@@ -32,7 +33,8 @@ import processing.video.Capture;
   int view_w = 1000;
   int view_h = (int)(view_w * cam_h/(float)cam_w);
   
-  Capture cam;
+  //Capture cam;
+  KinectPV2 kinect;
   
   public void settings() {
     size(view_w, view_h, P2D);
@@ -54,8 +56,13 @@ import processing.video.Capture;
 //    cam = new Capture(this, cameras[0]);
     
     // Capture, video library
-    cam = new Capture(this, cam_w, cam_h, 30);
-    cam.start();
+    //cam = new Capture(this, cam_w, cam_h, 30);
+    kinect = new KinectPV2(this);
+    //cam.start();
+    kinect.enableSkeletonColorMap(true);
+    kinect.enableColorImg(true);
+
+    kinect.init();
     
     pg_cam = (PGraphics2D) createGraphics(cam_w, cam_h, P2D);
     pg_cam.noSmooth();
@@ -70,17 +77,18 @@ import processing.video.Capture;
 
   public void draw() {
     
-    if( cam.available() ){
-      cam.read();
+   // if( cam.available() ){
+   //   cam.read();
       
       // render to offscreenbuffer
       pg_cam.beginDraw();
-      pg_cam.image(cam, 0, 0);
+     // pg_cam.image(cam, 0, 0);
+      pg_cam.image(kinect.getColorImage(),0,0);
       pg_cam.endDraw();
       
       // update Optical Flow
       opticalflow.update(pg_cam); 
-    }
+    //}
     
     // rgba -> luminance (just for display)
     DwFilter.get(context).luminance.apply(pg_cam, pg_cam);
